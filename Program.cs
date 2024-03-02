@@ -15,6 +15,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Add authentication services
+builder.Services.AddAuthentication();
 
 var app = builder.Build();
 
@@ -28,6 +30,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting(); // Use routing
 app.UseCors("OpenPolicy");
+
+// Apply the authentication and authorization middleware
+app.UseAuthentication(); // This line applies authentication middleware
+app.UseAuthorization(); // This line applies authorization middleware
 
 app.UseEndpoints(endpoints =>
 {
