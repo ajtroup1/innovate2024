@@ -1,83 +1,60 @@
-// Load TopoJSON data
-// d3.json("states-albers-10m.json").then(function(us) {
-//     const width = 975;
-//     const height = 610;
+async function createChart() {
+    // Load your TopoJSON data
+    const us = await d3.json("./resources/stript/states-albers-10m.json");
   
-//     // Define zoom behavior
-//     const zoom = d3.zoom()
-//         .scaleExtent([1, 8])
-//         .on("zoom", zoomed);
+    const width = 975;
+    const height = 610;
   
-//     // Select the container where the SVG will go
-//     const svgContainer = d3.select("#mapContainer");
-    
-//     // Create SVG element
-//     const svg = svgContainer.append("svg")
-//         .attr("viewBox", [0, 0, width, height])
-//         .attr("width", width)
-//         .attr("height", height)
-//         .attr("style", "max-width: 100%; height: auto;")
-//         .on("click", reset);
+    const zoom = d3.zoom()
+        .scaleExtent([1, 8])
+        .on("zoom", zoomed);
   
-//     const path = d3.geoPath();
-//     const g = svg.append("g");
+    // Append SVG to the body or a specific element instead of using d3.create
+    const svg = d3.select('body').append('svg')
+        .attr("viewBox", [0, 0, width, height])
+        .attr("width", width)
+        .attr("height", height)
+        .attr("style", "max-width: 100%; height: auto;")
+        .on("click", reset);
   
-//     // Draw states
-//     g.append("g")
-//       .attr("fill", "#444")
-//       .attr("cursor", "pointer")
-//       .selectAll("path")
-//       .data(topojson.feature(us, us.objects.states).features)
-//       .join("path")
-//         .on("click", clicked)
-//         .attr("d", path)
-//       .append("title")
-//         .text(d => d.properties.name);
+    const path = d3.geoPath();
+    const g = svg.append("g");
   
-//     // Outline for states
-//     g.append("path")
-//       .attr("fill", "none")
-//       .attr("stroke", "white")
-//       .attr("stroke-linejoin", "round")
-//       .attr("d", path(topojson.mesh(us, us.objects.states, (a, b) => a !== b)));
+    const states = g.append("g")
+        .attr("fill", "#444")
+        .attr("cursor", "pointer")
+        .selectAll("path")
+        .data(topojson.feature(us, us.objects.states).features)
+        .join("path")
+          .on("click", clicked)
+          .attr("d", path);
   
-//     svg.call(zoom);
+    states.append("title")
+        .text(d => d.properties.name);
   
-//     function reset() {
-//       // Reset functionality
-//     }
+    g.append("path")
+        .attr("fill", "none")
+        .attr("stroke", "white")
+        .attr("stroke-linejoin", "round")
+        .attr("d", path(topojson.mesh(us, us.objects.states, (a, b) => a !== b)));
   
-//     function clicked(event, d) {
-//       // Click functionality
-//     }
+    svg.call(zoom);
   
-//     function zoomed(event) {
-//       const {transform} = event;
-//       g.attr("transform", transform);
-//       g.attr("stroke-width", 1 / transform.k);
-//     }
-//   });
-
-//ONLOAD
-function handleOnLoad(){
-  populateFacilitiesArray()
-}
-
-//array for ALL facilities, 261?
-let facilities = []
-// Retreive SQL data
-async function populateFacilitiesArray() {
-  try{
-    const response = await fetch('http://localhost:5020/api/facilities');
-    if (!response.ok) {
-        throw new error("Network response is not ok");
+    function reset() {
+      // Reset functionality
     }
-    else {
-        facilities = await response.json();
-        console.log(facilities)
-        return facilities;
+  
+    function clicked(event, d) {
+      // Click functionality
     }
-  } catch (error){
-      console.log(error);
+  
+    function zoomed(event) {
+      const {transform} = event;
+      g.attr("transform", transform);
+      g.attr("stroke-width", 1 / transform.k);
+    }
   }
-}
+  
+  // Call createChart to initialize the chart creation
+  createChart();
+  
