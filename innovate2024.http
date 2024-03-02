@@ -1,0 +1,6 @@
+@innovate2024_HostAddress = http://localhost:5020
+
+GET {{innovate2024_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
