@@ -114,4 +114,7 @@ body {
     margin-bottom: 5px; /* Space between label and input */
 }
 
-  
+.login-title {
+    font-size: 30px; /* Adjust size as needed */
+    margin-bottom: 20px; /* Adjust margin as needed */
+  }
