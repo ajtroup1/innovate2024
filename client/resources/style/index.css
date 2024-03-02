@@ -1,3 +1,4 @@
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -86,4 +87,15 @@ body {
   color: white;
   border: none;
   cursor: pointer;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-around; /* This will distribute space evenly around the items */
+  align-items: center; /* This aligns items vertically at the center */
+  flex-wrap: wrap; /* Allows items to wrap onto multiple lines as needed */
+  gap: 10px; /* Optional: Adds some space between items */
+  padding: 10px; /* Adds some padding inside the filter container */
+  background-color: #f0f0f0; /* Light grey background */
+  border-radius: 8px; /* Optional: Rounds the corners of the filter container */
 }
