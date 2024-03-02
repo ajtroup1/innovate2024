@@ -4,6 +4,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers(); // Add MVC services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("OpenPolicy",
+    builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 
 var app = builder.Build();
 
@@ -16,19 +27,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting(); // Use routing
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    // Existing minimal API setup
-    // ...
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+app.UseCors("OpenPolicy");
 
 app.UseEndpoints(endpoints =>
 {
