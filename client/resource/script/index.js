@@ -243,9 +243,57 @@ function populateUSMap() {
   // Create polygons for each region
   createPolygons(regions);
 
+  addAlaskaMiniMap();
+
 
 
   }
+
+  // Function to create the container for the mini map
+function createAlaskaMiniMapContainer() {
+  var alaskaMiniMapContainer = L.DomUtil.create('div', 'alaska-mini-map-container');
+  alaskaMiniMapContainer.innerHTML = '<div id="alaskaMiniMap" style="width: 200px; height: 200px;"></div>';
+  return alaskaMiniMapContainer;
+}
+
+// Function to add the Alaska mini map
+function addAlaskaMiniMap() {
+  // Define the bounds for Alaska
+  var alaskaBounds = [
+      [71.5388, -168.5176], // North East
+      [51.1575, -130.0151] // South West
+  ];
+
+  // Create the container for the Alaska mini map
+  var alaskaMiniMapContainer = createAlaskaMiniMapContainer();
+
+  // Initialize the Alaska mini map
+  var alaskaMiniMap = L.map(alaskaMiniMapContainer.querySelector('#alaskaMiniMap'), {
+      maxBounds: alaskaBounds,
+      minZoom: 3,
+      maxZoom: 22,
+      zoomControl: false,
+      dragging: true,
+      doubleClickZoom: false,
+      boxZoom: false,
+      scrollWheelZoom: false,
+  }).setView([61.1304, -149.4937], 4); // Adjust starting position and zoom level for Alaska
+
+  // Add tile layer to the Alaska mini map
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 22
+  }).addTo(alaskaMiniMap);
+
+  // Position the Alaska mini map in the bottom left corner of the main map
+  var alaskaControl = L.control({ position: 'bottomleft' });
+  alaskaControl.onAdd = function (map) {
+      return alaskaMiniMapContainer;
+  };
+  alaskaControl.addTo(usMap); // Assuming `usMap` is your main map object
+}
+
+
 
   function createPolygons(regions) {
     regions.forEach(region => {
@@ -270,7 +318,40 @@ function populateUSMap() {
     });
 }
 
+function addAlaskaMap() {
+  // Set the bounds for Alaska
+  var alaskaBounds = [
+      [71.5388, -168.5176], // North East
+      [51.1575, -130.0151] // South West
+  ];
 
+  // Initialize the Alaska map
+  alaskaMap = L.map('alaskaMap', {
+      maxBounds: alaskaBounds,
+      minZoom: 3,
+      maxZoom: 22,
+      zoomControl: false,
+      dragging: true,
+      doubleClickZoom: false,
+      boxZoom: false,
+      scrollWheelZoom: false,
+  }).setView([61.1304, -149.4937], 4); // Adjust starting position and zoom level for Alaska
+
+  // Add tile layer to the Alaska map
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 22
+  }).addTo(alaskaMap);
+
+  // Position the Alaska map in the bottom left corner of the main map
+  var alaskaControl = L.control({ position: 'bottomleft' });
+  alaskaControl.onAdd = function (map) {
+      var div = L.DomUtil.create('div', 'alaska-map-container');
+      div.innerHTML = '<div id="alaskaMap" style="width: 200px; height: 200px;"></div>';
+      return div;
+  };
+  alaskaControl.addTo(usMap);
+}
 
   
 
@@ -300,59 +381,67 @@ function enableMapInteractions() {
 
 
   // Function to add a dot to the map
-// Function to add a dot to the map
-function addDot(map, facility) {
-  let type = facility.type;
-  let lat = facility.latitude;
-  let lon = facility.longitude;
-  if (lat === undefined || lon === undefined) {
-      console.error("Latitude or longitude is undefined for facility:", facility);
-      return; // Skip this facility if lat or lon is undefined
-  }
+  function addDot(map, facility) {
+    let type = facility.type;
+    let lat = facility.latitude;
+    let lon = facility.longitude;
+    if (lat === undefined || lon === undefined) {
+        console.error("Latitude or longitude is undefined for facility:", facility);
+        return; // Skip this facility if lat or lon is undefined
+    }
 
-  var iconOptions = {
-      iconSize: [10, 10], // size of the icon
-      iconAnchor: [6, 6], // point of the icon which will correspond to marker's location
-      popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
-  };
+    var iconOptions = {
+        iconSize: [10, 10], // size of the icon
+        iconAnchor: [6, 6], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+    };
 
-  var iconUrlMap = {
-      'Hospital': '../resource/img/hospitalicon.png',
-      'Division Office': '../resource/img/office-icon.png',
-      'Supply Chain Center': '../resource/img/supplychain-icon.png',
-      'Shared Service Center': '../resource/img/sharedservices-icon.png'
-  };
+    var iconUrlMap = {
+        'Hospital': '../resource/img/hospitalicon.png',
+        'Division Office': '../resource/img/office-icon.png',
+        'Supply Chain Center': '../resource/img/supplychain-icon.png',
+        'Shared Service Center': '../resource/img/sharedservices-icon.png'
+    };
 
-  // Set icon URL based on type
-  iconOptions.iconUrl = iconUrlMap[type] || '../resource/img/default-icon.png';
+    // Set icon URL based on type
+    iconOptions.iconUrl = iconUrlMap[type] || '../resource/img/default-icon.png';
 
-  var icon = L.icon(iconOptions);
+    var icon = L.icon(iconOptions);
 
-  // Correctly assign the marker to a variable
-  var marker = L.marker([lat, lon], { icon: icon }).addTo(map);
+    // Correctly assign the marker to a variable
+    var marker = L.marker([lat, lon], { icon: icon }).addTo(map);
 
-  // Attach the click event listener correctly
-  marker.on('click', function () {
-      handleShowMore(facility);
-  });
+    // Create tooltip content
+    var tooltipContent = `<strong>Name:</strong> ${facility.name}<br>` +
+                         `<strong>Division:</strong> ${facility.divName}<br>` +
+                         `<strong>State:</strong> ${facility.state}`;
 
-  // Listen to zoom events on the map
-  map.on('zoomend', function (e) {
-      // Get the current zoom level
-      var currentZoom = map.getZoom();
-      
-      // Adjust the behavior of markers based on zoom level
-      if (currentZoom < 7) {
-          // When zoomed out, increase the distance between points
-          var newLat = lat + (Math.random() - 0.5) * 3; // Adjust the factor to control the distance
-          var newLon = lon + (Math.random() - 0.5) * 3; // Adjust the factor to control the distance
-          marker.setLatLng([newLat, newLon]);
-      } else {
-          // When zoomed in, bring the points to their correct lat/long location
-          marker.setLatLng([lat, lon]);
-      }
-  });
+    // Attach tooltip to the marker
+    marker.bindTooltip(tooltipContent, { permanent: false, direction: 'top' });
+
+    // Attach the click event listener correctly
+    marker.on('click', function () {
+        handleShowMore(facility);
+    });
+
+    // Listen to zoom events on the map
+    map.on('zoomend', function (e) {
+        // Get the current zoom level
+        var currentZoom = map.getZoom();
+        
+        // Adjust the behavior of markers based on zoom level
+        if (currentZoom < 7) {
+            // When zoomed out, increase the distance between points
+            var newLat = lat + (Math.random() - 0.5) * 3; // Adjust the factor to control the distance
+            var newLon = lon + (Math.random() - 0.5) * 3; // Adjust the factor to control the distance
+            marker.setLatLng([newLat, newLon]);
+        } else {
+            // When zoomed in, bring the points to their correct lat/long location
+            marker.setLatLng([lat, lon]);
+        }
+    });
 }
+
 
 
 
@@ -521,8 +610,27 @@ function addDot(map, facility) {
 
   function addMapPoints(){
     facilities.forEach(facility => {
-            addDot(usMap, facility);
-    })
+      // Check if the facility is in Alaska
+      if (isInAlaska(facility)) {
+          addDot(alaskaMiniMap, facility);
+      } else {
+          addDot(usMap, facility);
+      }
+    });
+  }
+
+  function isInAlaska(facility) {
+    // Define the bounds for Alaska
+    var alaskaBounds = [
+        [71.5388, -168.5176], // North East
+        [51.1575, -130.0151] // South West
+    ];
+  
+    // Check if the facility's coordinates are within Alaska's bounds
+    return facility.latitude >= alaskaBounds[1][0] &&
+           facility.latitude <= alaskaBounds[0][0] &&
+           facility.longitude >= alaskaBounds[1][1] &&
+           facility.longitude <= alaskaBounds[0][1];
   }
       
   // Modify the applyFilters function to filter the facilities array
