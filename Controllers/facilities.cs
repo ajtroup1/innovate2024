@@ -51,7 +51,9 @@ namespace MyApp.Namespace
                                     companyName = Convert.ToString(reader["company_name"]),
                                     divMnem = Convert.ToString(reader["division_mnem"]),
                                     divName = Convert.ToString(reader["division_name"]),
-                                    networkMeditech = Convert.ToString(reader["network_meditech_network"])
+                                    networkMeditech = Convert.ToString(reader["network_meditech_network"]),
+                                    latitude = Convert.ToDouble(reader["latitude"]),
+                                    longitude = Convert.ToDouble(reader["longitude"]),
                                     // Add other properties as needed
                                 });
                             }

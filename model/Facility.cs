@@ -21,5 +21,7 @@ namespace innovate2024.model
         public string divMnem {get; set;}
         public string divName {get; set;}
         public string networkMeditech {get; set;}
+        public double latitude {get; set;}
+        public double longitude {get; set;}
     }
 }
