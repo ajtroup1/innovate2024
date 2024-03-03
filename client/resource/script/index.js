@@ -298,7 +298,7 @@ function enableMapInteractions() {
 
 
   // Function to add a dot to the map
-  // Function to add a dot to the map
+// Function to add a dot to the map
 function addDot(map, facility) {
   let type = facility.type;
   let lat = facility.latitude;
@@ -333,7 +333,25 @@ function addDot(map, facility) {
   marker.on('click', function () {
       handleShowMore(facility);
   });
+
+  // Listen to zoom events on the map
+  map.on('zoomend', function (e) {
+      // Get the current zoom level
+      var currentZoom = map.getZoom();
+      
+      // Adjust the behavior of markers based on zoom level
+      if (currentZoom < 7) {
+          // When zoomed out, increase the distance between points
+          var newLat = lat + (Math.random() - 0.5) * 5; // Adjust the factor to control the distance
+          var newLon = lon + (Math.random() - 0.5) * 5; // Adjust the factor to control the distance
+          marker.setLatLng([newLat, newLon]);
+      } else {
+          // When zoomed in, bring the points to their correct lat/long location
+          marker.setLatLng([lat, lon]);
+      }
+  });
 }
+
 
 
 
