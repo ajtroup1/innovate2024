@@ -256,46 +256,49 @@ async function populateFacilitiesArray() {
 }
 
 function addMapPoints(){
-    facilities.forEach(facility => {
-        addDot(usMap, facility)
-    })
+  facilities.forEach(facility => {
+      // Check if the facility is located in Alaska
+      if (isInAlaska(facility)) {
+          addDot(alaskaMap._miniMap, facility); // Use alaskaMap._miniMap for the Alaska mini-map
+      } else {
+          addDot(usMap, facility); // Add points to the main map for facilities outside Alaska
+      }
+  })
 }
     
-  //HANDLING
 // Modify the applyFilters function to filter the facilities array
 function applyFilters() {
-    const stateFilter = document.getElementById('stateFilter').value;
-    const timezoneFilter = document.getElementById('timezoneFilter').value;
-    const emrNameFilter = document.getElementById('emrNameFilter').value;
-    const typeFilter = document.getElementById('typeFilter').value;
-    const cityFilter = document.getElementById('cityFilter').value; // New filter
-    const divisionNameFilter = document.getElementById('divisionNameFilter').value; // New filter
+  const stateFilter = document.getElementById('stateFilter').value;
+  const timezoneFilter = document.getElementById('timezoneFilter').value;
+  const emrNameFilter = document.getElementById('emrNameFilter').value;
+  const typeFilter = document.getElementById('typeFilter').value;
+  const cityFilter = document.getElementById('cityFilter').value; // New filter
+  const divisionNameFilter = document.getElementById('divisionNameFilter').value; // New filter
 
-    // Filter facilities based on selected filters
-    let filteredFacilities = facilities.filter(facility => {
-        return (!stateFilter || facility.state === stateFilter) &&
-               (!timezoneFilter || facility.timeZone === timezoneFilter) &&
-               (!emrNameFilter || facility.emrName === emrNameFilter) &&
-               (!typeFilter || facility.type === typeFilter) &&
-               (!cityFilter || facility.city === cityFilter) &&
-               (!divisionNameFilter || facility.divName === divisionNameFilter);
-    });
+  // Filter facilities based on selected filters
+  let filteredFacilities = facilities.filter(facility => {
+      return (!stateFilter || facility.state === stateFilter) &&
+             (!timezoneFilter || facility.timeZone === timezoneFilter) &&
+             (!emrNameFilter || facility.emrName === emrNameFilter) &&
+             (!typeFilter || facility.type === typeFilter) &&
+             (!cityFilter || facility.city === cityFilter) &&
+             (!divisionNameFilter || facility.divName === divisionNameFilter);
+  });
 
-    // Clear existing markers from the map
-    map.eachLayer(function (layer) {
-        if (layer instanceof L.Marker) {
-            map.removeLayer(layer);
-        }
-    });
+  // Clear existing markers from the map
+  usMap.eachLayer(function (layer) { // Use usMap instead of map
+      if (layer instanceof L.Marker) {
+          usMap.removeLayer(layer); // Use usMap instead of map
+      }
+  });
 
-    // Add markers for filtered facilities
-    filteredFacilities.forEach(facility => {
-        addDot(facility);
-    });
+  // Add markers for filtered facilities
+  filteredFacilities.forEach(facility => {
+      addDot(usMap, facility); // Pass usMap as the first argument
+  });
 
-    // Repopulate table with filtered results
-    populateFacilitiesTable(filteredFacilities);
 }
+
 
 
 function handleShowMore(facility) {
@@ -322,4 +325,13 @@ function handleShowMore(facility) {
   }
 }
 
-  
+function isInAlaska(facility) {
+  const alaskaBounds = [
+      [70.461799,-143.390298], // North East
+      [57.551209,-166.494581] // South West
+  ];
+  const lat = facility.latitude;
+  const lon = facility.longitude;
+  return lat >= alaskaBounds[1][0] && lat <= alaskaBounds[0][0] &&
+         lon >= alaskaBounds[1][1] && lon <= alaskaBounds[0][1];
+}
