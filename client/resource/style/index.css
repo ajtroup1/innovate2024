@@ -94,3 +94,67 @@ body {
   border: none;
   cursor: pointer;
 }
+
+.container {
+  display: flex;
+}
+
+.info {
+  width: 300px; /* Adjust width as needed */
+  margin-right: 20px; /* Add space between the box and the right edge */
+  padding: 20px;
+  background-color: #f9f9f9; /* Add background color */
+  border: 1px solid #ccc; /* Add border for clarity */
+}
+
+.main-container {
+  display: flex;
+}
+
+.map-container {
+  flex: 1;
+  margin-right: 20px; /* Add space between map and info */
+}
+
+.info-container {
+  width: 250px;
+}
+
+.map {
+  width: 100%;
+  height: 400px;
+  margin-left: 20px;
+}
+
+.info-container .info {
+  width: 200px; /* Adjust width as needed */
+  margin-right: 50px; /* Add space between the box and the right edge */
+  padding: 20px;
+  background-color: #f9f9f9; /* Add background color */
+  border: 1px solid #ccc; /* Add border for clarity */
+}
+
+
+.filter-container select {
+  padding: 0.5rem;
+  margin-right: 1rem;
+}
+
+.filter-box {
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+  display: flex; /* Make the filter box a flex container */
+  justify-content: space-between; /* Distribute items evenly along the main axis */
+}
+
+.filter-container {
+  flex: 1; /* Allow the filter container to grow and fill available space */
+}
+
+.filter-container select {
+  width: 100%; /* Make the select elements fill the entire width of their container */
+  padding: 0.5rem;
+  margin-right: 1rem;
+}

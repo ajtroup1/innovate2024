@@ -2,62 +2,53 @@
 <html>
 <head>
     <title>Interactive US Map</title>
-    <link rel="stylesheet" href="./resource/style/index.css">
+    <link rel="stylesheet" href="../resource/style/index.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>
-<body>
+<body onload="handleOnLoad()">
 
-    <!-- HEADER -->
-  <header class="header">
+<!-- HEADER -->
+<header class="header">
     <!-- Logo -->
     <div class="logo">
-      <img src="./resource/img/2020-EB-HCA-Healthcare-FC.png" alt="Logo" style="height: 50px;">
+        <img src="../resource/img/2020-EB-HCA-Healthcare-FC.png" alt="Logo" style="height: 50px;">
     </div>
     <!-- Navigation Links -->
     <nav class="nav-links">
-      <!-- Add your navigation links here -->
+        <!-- Add your navigation links here -->
     </nav>
     <!-- Other Header Content -->
-  </header>
+</header>
 
- <!-- Breadcrumbs and Login -->
+<!-- Breadcrumbs and Login -->
 <div class="breadcrumbs-login-container">
     <div class="breadcrumbs">
-      Locations
+        Locations
     </div>
     <div class="login-button">
-      <button type="button">Login</button>
+        <button type="button">Login</button>
     </div>
-  </div>
-  
+</div>
 
-  <!-- Search Bar and Filters -->
-  <div class="search-container">
-    <input type="text" class="search-input" placeholder="Enter address or location">
-    <button class="search-button">Search</button>
-  </div>
 
-  <!-- Filter Options -->
-  <div class="filter-container">
-    <select>
-      <option>All Locations</option>
-      <!-- Add more options here -->
-    </select>
-    <select>
-      <option>A-Z Listing</option>
-      <!-- Add more options here -->
-    </select>
-  </div>
-
-  <!-- Heading -->
-  <div class="heading-bar">
+<!-- Heading -->
+<div class="heading-bar">
     <h1>Locations</h1>
-  </div>
+</div>
+<div id="filter-container"></div>
 
-  <div id="nameElement">Name will be displayed here</div>
-  
-    <div id="usMap" style="width: 600px; height: 400px;"></div>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="./resource/script/index.js"></script>
+<div class="main-container">
+    <div class="map-container">
+        <div id="usMap" class="map"></div>
+    </div>
+    <div class="info-container">
+        <div id="side-more-info" class="info"></div>
+    </div>
+</div>
+
+<div id="facilities-table"></div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="../resource/script/index.js"></script>
 </body>
 </html>

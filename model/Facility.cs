@@ -5,6 +5,8 @@ namespace innovate2024.model
     public class Facility
     {
         public int id {get; set;}
+        public double latitude {get; set;}
+        public double longitude {get; set;}
         public int coid {get; set;}
         public string name {get; set;}
         public string timeZone {get; set;}
