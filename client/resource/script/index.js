@@ -3,13 +3,16 @@ let map; // Declare map variable
 
 // Function to initialize the map
 function populateUSMap() {
-    // Initialize the map on the "usMap" div with a given center and zoom
-    map = L.map('usMap').setView([37.8, -96], 4);
+  // Initialize the map on the "usMap" div with a given center and zoom
+  map = L.map('usMap').setView([37.8, -96], 4);
 
-    // Add a tile layer to add to our map
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+  // Add a tile layer to add to our map
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
+}
+function zoomOut() {
+  map.setView([37.8, -96], 4); // Set the view back to the initial position and zoom level
 }
 
 // Function to add a dot to the map
@@ -256,21 +259,25 @@ function applyFilters() {
 }
 
 
-  function handleShowMore(facility){
-        console.log('facility chosen', facility)
-    let html=`
-        <h2>${facility.name}</h2>
-        <p><strong>Division:</strong> ${facility.divName}</p>
-        <p><strong>City:</strong> ${facility.city}</p>
-        <p><strong>State:</strong> ${facility.state}</p>
-        <p><strong>Timezone:</strong> ${facility.timeZone}</p>
-        <p><strong>Address:</strong> ${facility.address1}</p>
-        <p><strong>Zip:</strong> ${facility.zip}</p>
-        <p><strong>EMR Name:</strong> ${facility.emrName}</p>
-        <p><strong>Type:</strong> ${facility.type}</p>
-        <!-- Add more information as needed -->
-        `
+function handleShowMore(facility){
+  console.log('facility chosen', facility);
+  let html=`
+      <h2>${facility.name}</h2>
+      <p><strong>Division:</strong> ${facility.divName}</p>
+      <p><strong>City:</strong> ${facility.city}</p>
+      <p><strong>State:</strong> ${facility.state}</p>
+      <p><strong>Timezone:</strong> ${facility.timeZone}</p>
+      <p><strong>Address:</strong> ${facility.address1}</p>
+      <p><strong>Zip:</strong> ${facility.zip}</p>
+      <p><strong>EMR Name:</strong> ${facility.emrName}</p>
+      <p><strong>Type:</strong> ${facility.type}</p>
+      <!-- Add more information as needed -->
+      `;
 
-        document.getElementById('side-more-info').innerHTML = html
-  }
+  document.getElementById('side-more-info').innerHTML = html;
+
+  // Zoom to the clicked facility's location
+  map.setView([facility.latitude, facility.longitude], 7); // Adjust the zoom level as needed
+}
+
   
