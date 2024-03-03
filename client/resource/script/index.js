@@ -598,11 +598,6 @@ function enableMapInteractions() {
       });
       html += `</select>`;
 
-      html+=`
-      <button onclick="resetFilters()">Reset Filters</button>
-      </div></div>
-      `
-
       // Make sure to append the new filter HTML to the existing ones correctly
       // and update the inner HTML of the filter container
       document.getElementById('filter-container').innerHTML = html;
@@ -665,8 +660,6 @@ function enableMapInteractions() {
     });
 
   }
-
-
 
   function handleShowMore(facility) {
     console.log('facility chosen', facility);
