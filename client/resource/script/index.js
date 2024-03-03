@@ -7,32 +7,32 @@ let hawaiiMap; // Declare Hawaii map variable
 let polygons = []
 
 // Function to initialize the main map
+// Function to initialize the main map
 function populateUSMap() {
-    // Set the bounds for the United States, including Alaska and Hawaii
-    var usBounds = [
+  // Set the bounds for the United States, including Alaska and Hawaii
+  var usBounds = [
       [49.384358, -66.93457], // North East
       [24.396308, -125.00165] // South West
   ];
-  
-  // Initialize the map with the bounds and updated options
-usMap = L.map('usMap', {
-  maxBounds: usBounds,
-  minZoom: 3, // Minimum zoom level
-  maxZoom: 22, // Adjust the maximum zoom level as needed
-  zoomControl: false, // Disable zoom control
-  dragging: true, // Enable or disable dragging as per your requirement
-  doubleClickZoom: false, // Disable Leaflet's double-click zoom handling
-  boxZoom: false, // Disable box zoom
-  scrollWheelZoom: false, // Disable scroll wheel zoom
-}).setView([37.8, -96], 4);
 
-// Handle double-click event for manual zoom in
-usMap.on('dblclick', function(e) {
-  // Increase zoom level by 1 (or any desired increment)
-  usMap.zoomIn();
-});
-  
-  console.log('map beginning zoom: ', usMap.getZoom())
+  // Initialize the map with the bounds and updated options
+  usMap = L.map('usMap', {
+      maxBounds: usBounds,
+      minZoom: 3, // Minimum zoom level
+      maxZoom: 22, // Adjust the maximum zoom level as needed
+      zoomControl: false, // Disable zoom control
+      dragging: true, // Enable or disable dragging as per your requirement
+      doubleClickZoom: false, // Disable Leaflet's double-click zoom handling
+      boxZoom: false, // Disable box zoom
+      scrollWheelZoom: false, // Disable scroll wheel zoom
+  }).setView([39.8283, -98.5795], 4); // Adjust the starting position and zoom level
+
+  // Handle double-click event for manual zoom in
+  usMap.on('dblclick', function(e) {
+      // Increase zoom level by 1 (or any desired increment)
+      usMap.zoomIn();
+  });
+
   // Add tile layer to the map as before
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -41,37 +41,37 @@ usMap.on('dblclick', function(e) {
 
   // Create a new Leaflet control for the reset button, positioned in the top left corner
   var resetControl = L.Control.extend({
-    options: {
-        position: 'topleft' // Position the control in the top left corner
-    },
+      options: {
+          position: 'topleft' // Position the control in the top left corner
+      },
 
-    onAdd: function (map) {
-        // Create a button element
-        var container = L.DomUtil.create('button', 'reset-view-btn');
-        container.innerHTML = 'Reset View';
-        container.style.backgroundColor = 'white';
-        container.style.padding = '5px';
-        container.style.margin = '10px';
-        container.style.cursor = 'pointer';
-        container.style.border = 'none';
-        container.style.borderRadius = '4px';
-        container.title = 'Click to reset the map view to the initial position';
+      onAdd: function(map) {
+          // Create a button element
+          var container = L.DomUtil.create('button', 'reset-view-btn');
+          container.innerHTML = 'Reset View';
+          container.style.backgroundColor = 'white';
+          container.style.padding = '5px';
+          container.style.margin = '10px';
+          container.style.cursor = 'pointer';
+          container.style.border = 'none';
+          container.style.borderRadius = '4px';
+          container.title = 'Click to reset the map view to the initial position';
 
-        // Reset the map view to the initial position when the button is clicked
-        L.DomEvent.on(container, 'click', function () {
-          usMap.setView([37.8, -96], 4); // Set the view back to the initial position
-          
-          // Call createPolygons() to recreate the polygons with the initial regions data
-          createPolygons(regions);
-      });
+          // Reset the map view to the initial position when the button is clicked
+          L.DomEvent.on(container, 'click', function() {
+              usMap.setView([39.8283, -98.5795], 4); // Set the view back to the initial position
+              // Call createPolygons() to recreate the polygons with the initial regions data
+              createPolygons(regions);
+          });
 
-        return container;
-    }
-});
+          return container;
+      }
+  });
 
+  // Add the reset button control to the map
+  usMap.addControl(new resetControl());
 
-// Add the reset button control to the map
-usMap.addControl(new resetControl());
+  console.log('map beginning zoom: ', usMap.getZoom())
 
     // Define regions with their coordinates
     let regions = [
@@ -252,8 +252,8 @@ usMap.addControl(new resetControl());
         let coordinates = region.coordinates;
 
         let polygon = L.polygon(coordinates, {
-            color: 'blue',
-            weight: 2,
+            weight: 0, // Set weight to 0 to remove the border
+            color: 'transparent', // Set border color to transparent
             fillColor: 'transparent',
             fillOpacity: 0,
         }).addTo(usMap);
@@ -269,6 +269,8 @@ usMap.addControl(new resetControl());
         polygons.push(polygon);
     });
 }
+
+
 
   
 
@@ -309,7 +311,7 @@ function addDot(map, facility) {
   }
 
   var iconOptions = {
-      iconSize: [15, 15], // size of the icon
+      iconSize: [10, 10], // size of the icon
       iconAnchor: [6, 6], // point of the icon which will correspond to marker's location
       popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
   };
@@ -342,8 +344,8 @@ function addDot(map, facility) {
       // Adjust the behavior of markers based on zoom level
       if (currentZoom < 7) {
           // When zoomed out, increase the distance between points
-          var newLat = lat + (Math.random() - 0.5) * 5; // Adjust the factor to control the distance
-          var newLon = lon + (Math.random() - 0.5) * 5; // Adjust the factor to control the distance
+          var newLat = lat + (Math.random() - 0.5) * 3; // Adjust the factor to control the distance
+          var newLon = lon + (Math.random() - 0.5) * 3; // Adjust the factor to control the distance
           marker.setLatLng([newLat, newLon]);
       } else {
           // When zoomed in, bring the points to their correct lat/long location
