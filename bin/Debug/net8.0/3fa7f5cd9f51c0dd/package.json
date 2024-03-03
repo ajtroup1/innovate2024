@@ -1,0 +1,17 @@
+{
+  "name": "3fa7f5cd9f51c0dd",
+  "main": "3fa7f5cd9f51c0dd@185.js",
+  "version": "185.0.0",
+  "homepage": "https://observablehq.com/d/3fa7f5cd9f51c0dd",
+  "author": {
+    "name": "  ghhh",
+    "url": "https://observablehq.com/@kdavis109"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "^5.9.7"
+  },
+  "dependencies": {
+    "3fa7f5cd9f51c0dd": "https://api.observablehq.com/d/3fa7f5cd9f51c0dd@185.tgz?v=3"
+  }
+}

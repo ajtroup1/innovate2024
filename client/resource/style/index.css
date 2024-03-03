@@ -1,3 +1,10 @@
+/* Style for the map container */
+#usMap {
+    border: 1px solid #AAA;
+    margin: 20px auto;
+    display: block;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
