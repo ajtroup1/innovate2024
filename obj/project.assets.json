@@ -7415,19 +7415,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\epicn\\.nuget\\packages\\": {}
+    "C:\\Users\\TEMP\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\epicn\\Desktop\\shenanigans and hijinx\\innovate2024\\innovate2024.csproj",
+      "projectUniqueName": "C:\\Users\\Aiden\\MIS\\innovate2024\\innovate2024.csproj",
       "projectName": "innovate2024",
-      "projectPath": "C:\\Users\\epicn\\Desktop\\shenanigans and hijinx\\innovate2024\\innovate2024.csproj",
-      "packagesPath": "C:\\Users\\epicn\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\epicn\\Desktop\\shenanigans and hijinx\\innovate2024\\obj\\",
+      "projectPath": "C:\\Users\\Aiden\\MIS\\innovate2024\\innovate2024.csproj",
+      "packagesPath": "C:\\Users\\TEMP\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Aiden\\MIS\\innovate2024\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\epicn\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\TEMP\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -7445,6 +7445,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -7487,7 +7492,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
