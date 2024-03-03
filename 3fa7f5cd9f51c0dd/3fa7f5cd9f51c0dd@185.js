@@ -1,3 +1,15 @@
+//array for ALL facilities, 261?
+let facilities = []
+
+//ONLOAD
+async function handleOnLoad(){
+  await populateFacilitiesArray();
+    populateFacilitiesTable(facilities);
+    populateFiltersContainer();
+}
+
+
+
 function _1(md){return(
 md
 )}
@@ -93,15 +105,6 @@ export default function define(runtime, observer) {
   return main;
 }
 
-//ONLOAD
-async function handleOnLoad(){
-  await populateFacilitiesArray();
-    populateFacilitiesTable(facilities);
-    populateFiltersContainer();
-}
-
-//array for ALL facilities, 261?
-let facilities = []
 
 
 //DATA

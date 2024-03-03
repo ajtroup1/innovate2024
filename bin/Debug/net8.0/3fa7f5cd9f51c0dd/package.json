@@ -9,6 +9,9 @@
   },
   "type": "module",
   "peerDependencies": {
-    "@observablehq/runtime": "4 - 5"
+    "@observablehq/runtime": "^5.9.7"
+  },
+  "dependencies": {
+    "3fa7f5cd9f51c0dd": "https://api.observablehq.com/d/3fa7f5cd9f51c0dd@185.tgz?v=3"
   }
 }
