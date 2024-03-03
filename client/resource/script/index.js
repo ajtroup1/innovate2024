@@ -2,81 +2,99 @@ let facilities = [];
 let map; // Declare map variable
 
 let usMap; // Declare main map variable
-let alaskaMap; // Declare Alaska map variable
+//let alaskaMap; // Declare Alaska map variable
 let hawaiiMap; // Declare Hawaii map variable
+let polygons = []
 
 // Function to initialize the main map
 function populateUSMap() {
     // Set the bounds for the United States, including Alaska and Hawaii
     var usBounds = [
-        [49.384358, -66.93457], // North East
-        [24.396308, -125.00165] // South West
-    ];
-
-    // Initialize the map with the bounds
-    usMap = L.map('usMap', {
-      maxBounds: usBounds,
-      minZoom: 3, // Adjust the minZoom as needed
-      zoomControl: false, // Disable zoom control
-    scrollWheelZoom: false, // Disable scroll wheel zoom
-    dragging: false // Disable dragging
-  }).setView([37.8, -96], 4);
+      [49.384358, -66.93457], // North East
+      [24.396308, -125.00165] // South West
+  ];
   
+  // Initialize the map with the bounds and updated options
+usMap = L.map('usMap', {
+  maxBounds: usBounds,
+  minZoom: 3, // Minimum zoom level
+  maxZoom: 22, // Adjust the maximum zoom level as needed
+  zoomControl: false, // Disable zoom control
+  dragging: true, // Enable or disable dragging as per your requirement
+  doubleClickZoom: false, // Disable Leaflet's double-click zoom handling
+  boxZoom: false, // Disable box zoom
+  scrollWheelZoom: false, // Disable scroll wheel zoom
+}).setView([37.8, -96], 4);
+
+// Handle double-click event for manual zoom in
+usMap.on('dblclick', function(e) {
+  // Increase zoom level by 1 (or any desired increment)
+  usMap.zoomIn();
+});
+  
+  console.log('map beginning zoom: ', usMap.getZoom())
   // Add tile layer to the map as before
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxBounds: usBounds,
-      noWrap: true
+      maxZoom: 22 // Ensure the tile layer also supports the maximum zoom level
   }).addTo(usMap);
 
-    // Create mini-maps for Alaska and Hawaii
-    alaskaMap = new L.Control.MiniMap(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'), { toggleDisplay: true }).addTo(usMap);
-    hawaiiMap = new L.Control.MiniMap(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'), { toggleDisplay: true }).addTo(usMap);
+  // Create a new Leaflet control for the reset button, positioned in the top left corner
+  var resetControl = L.Control.extend({
+    options: {
+        position: 'topleft' // Position the control in the top left corner
+    },
 
-    // Set positions of mini-maps
-    alaskaMap._container.style.bottom = '10px';
-    alaskaMap._container.style.left = '10px';
-    hawaiiMap._container.style.bottom = '10px';
-    hawaiiMap._container.style.left = '150px'; // Adjust left position as needed
+    onAdd: function (map) {
+        // Create a button element
+        var container = L.DomUtil.create('button', 'reset-view-btn');
+        container.innerHTML = 'Reset View';
+        container.style.backgroundColor = 'white';
+        container.style.padding = '5px';
+        container.style.margin = '10px';
+        container.style.cursor = 'pointer';
+        container.style.border = 'none';
+        container.style.borderRadius = '4px';
+        container.title = 'Click to reset the map view to the initial position';
 
-    // Set bounds and zoom level for Alaska
-    var alaskaBounds = [
-        [70.461799,-143.390298], // North East
-        [57.551209,-166.494581] // South West
-    ];
-    alaskaMap._miniMap.setView([61.370716, -152.404419], 3); // Adjust center and zoom level as needed
-    alaskaMap._miniMap.options.minZoom = 3;
-    alaskaMap._miniMap.setMaxBounds(alaskaBounds);
+        // Reset the map view to the initial position when the button is clicked
+        L.DomEvent.on(container, 'click', function () {
+          usMap.setView([37.8, -96], 4); // Set the view back to the initial position
+          
+          // Call createPolygons() to recreate the polygons with the initial regions data
+          createPolygons(regions);
+      });
 
-    // Set bounds and zoom level for Hawaii
-    var hawaiiBounds = [
-        [22.236744, -154.566406], // North East
-        [18.986428, -160.659180] // South West
-    ];
-    hawaiiMap._miniMap.setView([20.8036, -157.505], 7); // Adjust center and zoom level as needed
-    hawaiiMap._miniMap.options.minZoom = 7;
-    hawaiiMap._miniMap.setMaxBounds(hawaiiBounds);
+        return container;
+    }
+});
+
+
+// Add the reset button control to the map
+usMap.addControl(new resetControl());
 
     // Define regions with their coordinates
     let regions = [
-        {
-            name: 'TriStar',
-            coordinates: [
-                [38.510349, -82.632833],
-                [36.276164, -81.797315],
-                [34.810195, -84.479769],
-                [37.610750, -93.802396],
-                [37.121782, -88.877234],
-                [38.819167, -84.699143]
-            ]
-        },
+      {
+        name: 'TriStar',
+        coordinates: [
+            [38.510349, -82.632833],
+            [36.276164, -81.797315],
+            [34.810195, -84.479769],
+            [37.610750, -93.802396],
+            [37.121782, -88.877234],
+            [38.819167, -84.699143]
+        ],
+        cameraSpot: { lat: 37.610750, lng: -93.802396, zoom: 6 }
+    },
         {
             name: 'Mountain',
             coordinates: [
                 [43.193965, -111.928249],
                 [43.449728, -116.167303],
                 [39.446374, -110.793601]
-            ]
+            ],
+            cameraSpot: { lat: 42, lng: -112, zoom: 6 }
         },
         {
             name: 'Far West',
@@ -84,7 +102,8 @@ function populateUSMap() {
                 [36.438961, -121.523416],
                 [33.302986, -116.730179],
                 [36.049099, -114.795294]
-            ]
+            ],
+            cameraSpot: { lat: 34, lng: -118, zoom: 6 }
         },
         {
             name: 'Central & West Texas',
@@ -93,7 +112,8 @@ function populateUSMap() {
                 [31.259770, -106.026750],
                 [30.656816, -98.990805],
                 [33, -99]
-            ]
+            ],
+            cameraSpot: { lat: 31, lng: -102, zoom: 6 }
         },
         {
             name: 'San Antonio',
@@ -101,7 +121,8 @@ function populateUSMap() {
                 [29.897806, -98.331185],
                 [28.671311, -99.122729],
                 [28.863918, -98.639008]
-            ]
+            ],
+            cameraSpot: { lat: 29, lng: -99, zoom: 6 }
         },
         {
             name: 'Gulf Coast',
@@ -112,7 +133,8 @@ function populateUSMap() {
                 [31.574791, -96.606034],
                 [31.049169, -95.726541],
                 [29.033118, -95.550642]
-            ]
+            ],
+            cameraSpot: { lat: 27.5, lng: -96.5, zoom: 6 }
         },
         {
             name: 'Continental',
@@ -120,7 +142,9 @@ function populateUSMap() {
                 [37.854037, -97.045605],
                 [39.058437, -105.224890],
                 [40.007421, -104.301423]
-            ]
+                
+            ],
+            cameraSpot: { lat: 38.5, lng: -102, zoom: 6 }
         },
         {
             name: 'MidAmerica',
@@ -129,7 +153,8 @@ function populateUSMap() {
                 [38.579091, -94.714948],
                 [39.024305, -92.736088],
                 [39.534550, -93.660524]
-            ]
+            ],
+            cameraSpot: { lat: 38.5, lng: -93.5, zoom: 6 }
         },
         {
             name: 'North Texas',
@@ -138,7 +163,8 @@ function populateUSMap() {
                 [32.803898, -98.007043],
                 [32.415211, -96.841715],
                 [32.748474, -96.028184]
-            ]
+            ],
+            cameraSpot: { lat: 32.5, lng: -97, zoom: 6 }
         },
         {
             name: 'SouthAtlantic',
@@ -150,7 +176,8 @@ function populateUSMap() {
                 [31.283245, -82.689268],
                 [32.859286, -83.072822],
                 [33.977986, -82.743013]
-            ]
+            ],
+            cameraSpot: { lat: 32, lng: -80, zoom: 6 }
         },
         {
             name: 'NorthFlorida',
@@ -162,7 +189,8 @@ function populateUSMap() {
                 [28.864880, -80.911621],
                 [28.169843, -80.735723],
                 [29.923517, -85.401433]
-            ]
+            ],
+            cameraSpot: { lat: 29.5, lng: 83, zoom: 6 }
         },
   {
     name: 'WestFlorida',
@@ -172,7 +200,8 @@ function populateUSMap() {
       [28.294708, -81.547191],
       [26.460738, -81.679115],
       [27.525810, -82.757272]
-    ]
+    ],
+    cameraSpot: { lat: 27.5, lng: -81.5, zoom: 6 }
   },
   {
     name: 'EastFlorida',
@@ -181,7 +210,8 @@ function populateUSMap() {
       [27.739940, -80.206742],
       [25.183071, -79.920907],
       [25.242709, -80.470590]
-    ]
+    ],
+    cameraSpot: { lat: 26.5, lng: -79.5, zoom: 6 }
   },
   {
     name: 'NorthCarolina',
@@ -191,7 +221,8 @@ function populateUSMap() {
       [36.169807, -81.264491],
       [34.665741, -81.528339],
       [34.665741, -82.935528]
-    ]
+    ],
+    cameraSpot: { lat: 35, lng: -82.5, zoom: 6 }
   },
   {
     name: 'Capital',
@@ -205,6 +236,7 @@ function populateUSMap() {
       [38.771216, -87.821842],
       [39.791655, -87.777868]
     ],
+    cameraSpot: { lat: 27.5, lng: -96.5, zoom: 6 }
   }]
 
 
@@ -213,31 +245,31 @@ function populateUSMap() {
 
 
 
-      hawaiiMap._miniMap.setView([20.8036, -157.505], 7); // Adjust center and zoom level as needed
-      hawaiiMap._miniMap.options.minZoom = 7;
-      hawaiiMap._miniMap.setMaxBounds(hawaiiBounds);
   }
 
   function createPolygons(regions) {
     regions.forEach(region => {
-      let coordinates = region.coordinates;
-  
-      let polygon = L.polygon(coordinates, {
-        color: 'transparent', // Make the border transparent
-        fillColor: 'transparent', // Ensure the fill is also transparent
-        fillOpacity: 0, // No fill opacity
-      }).addTo(usMap);
-  
-      // Bind a tooltip to the polygon with the region's name
-      polygon.bindTooltip(region.name, {
-        permanent: false, // Tooltip is not always visible
-        direction: 'center', // Show the tooltip in the center of the region
-        className: 'region-name-tooltip' // Custom class for styling if needed
-      });
-  
-      // You could adjust the tooltip options as needed for better visibility or styling
+        let coordinates = region.coordinates;
+
+        let polygon = L.polygon(coordinates, {
+            color: 'blue',
+            weight: 2,
+            fillColor: 'transparent',
+            fillOpacity: 0,
+        }).addTo(usMap);
+
+        // Add tooltip to the polygon
+        polygon.bindTooltip(region.name, { permanent: false, direction: 'center' });
+
+        polygon.on('click', function(e) {
+            usMap.fitBounds(e.target.getBounds());
+        });
+
+        // Add the polygon to the polygons array
+        polygons.push(polygon);
     });
-  }
+}
+
   
 
 function disableMapInteractions() {
@@ -266,40 +298,43 @@ function enableMapInteractions() {
 
 
   // Function to add a dot to the map
-  function addDot(map, facility) {
-      let type = facility.type;
-      let lat = facility.latitude;
-      let lon = facility.longitude;
-      if(lat === undefined || lon === undefined) {
-          console.error("Latitude or longitude is undefined for facility:", facility);
-          return; // Skip this facility if lat or lon is undefined
-      }
-      var iconOptions = {
-          iconSize: [12, 12], // size of the icon
-          iconAnchor: [19, 19], // point of the icon which will correspond to marker's location
-          popupAnchor: [0, -19] // point from which the popup should open relative to the iconAnchor
-      };
-
-      var iconUrlMap = {
-          'Hospital': '../resource/img/hospitalicon.png',
-          'Division Office': '../resource/img/office-icon.png',
-          'Supply Chain Center': '../resource/img/supplychain-icon.png',
-          'Shared Service Center': '../resource/img/sharedservices-icon.png'
-      };
-
-      // Set icon URL based on type
-      iconOptions.iconUrl = iconUrlMap[type] || '../resource/img/default-icon.png';
-
-      var icon = L.icon(iconOptions);
-
-      // Correctly assign the marker to a variable
-      var marker = L.marker([lat, lon], {icon: icon}).addTo(map);
-
-      // Attach the click event listener correctly
-      marker.on('click', function() {
-          handleShowMore(facility);
-      });
+  // Function to add a dot to the map
+function addDot(map, facility) {
+  let type = facility.type;
+  let lat = facility.latitude;
+  let lon = facility.longitude;
+  if (lat === undefined || lon === undefined) {
+      console.error("Latitude or longitude is undefined for facility:", facility);
+      return; // Skip this facility if lat or lon is undefined
   }
+
+  var iconOptions = {
+      iconSize: [15, 15], // size of the icon
+      iconAnchor: [6, 6], // point of the icon which will correspond to marker's location
+      popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+  };
+
+  var iconUrlMap = {
+      'Hospital': '../resource/img/hospitalicon.png',
+      'Division Office': '../resource/img/office-icon.png',
+      'Supply Chain Center': '../resource/img/supplychain-icon.png',
+      'Shared Service Center': '../resource/img/sharedservices-icon.png'
+  };
+
+  // Set icon URL based on type
+  iconOptions.iconUrl = iconUrlMap[type] || '../resource/img/default-icon.png';
+
+  var icon = L.icon(iconOptions);
+
+  // Correctly assign the marker to a variable
+  var marker = L.marker([lat, lon], { icon: icon }).addTo(map);
+
+  // Attach the click event listener correctly
+  marker.on('click', function () {
+      handleShowMore(facility);
+  });
+}
+
 
 
 
@@ -466,12 +501,7 @@ function enableMapInteractions() {
 
   function addMapPoints(){
     facilities.forEach(facility => {
-        // Check if the facility is located in Alaska
-        if (isInAlaska(facility)) {
-            addDot(alaskaMap._miniMap, facility); // Use alaskaMap._miniMap for the Alaska mini-map
-        } else {
-            addDot(usMap, facility); // Add points to the main map for facilities outside Alaska
-        }
+            addDot(usMap, facility);
     })
   }
       
@@ -532,15 +562,4 @@ function enableMapInteractions() {
       // Zoom to the clicked facility's location
       map.setView([facility.latitude, facility.longitude], 7); // Adjust the zoom level as needed
     }
-  }
-
-  function isInAlaska(facility) {
-    const alaskaBounds = [
-        [70.461799,-143.390298], // North East
-        [57.551209,-166.494581] // South West
-    ];
-    const lat = facility.latitude;
-    const lon = facility.longitude;
-    return lat >= alaskaBounds[1][0] && lat <= alaskaBounds[0][0] &&
-          lon >= alaskaBounds[1][1] && lon <= alaskaBounds[0][1];
   }
