@@ -4,6 +4,29 @@
     <title>Interactive US Map</title>
     <link rel="stylesheet" href="../resource/style/index.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Leaflet MiniMap CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-minimap/dist/Control.MiniMap.min.css" />
+    <style>
+        /* Style for the map container */
+        .map-container {
+            position: relative;
+        }
+        /* Style for the mini-map containers */
+        .mini-map {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+        .mini-map h3 {
+            margin: 0;
+            padding: 5px;
+            background-color: #fff;
+            border-bottom: 1px solid #ccc;
+            border-radius: 5px 5px 0 0;
+        }
+    </style>
 </head>
 <body onload="handleOnLoad()">
 
@@ -40,6 +63,12 @@
 <div class="main-container">
     <div class="map-container">
         <div id="usMap" class="map"></div>
+        <div id="alaskaMap" class="mini-map">
+            <h3>Alaska</h3>
+        </div>
+        <div id="hawaiiMap" class="mini-map">
+            <h3>Hawaii</h3>
+        </div>
     </div>
     <div class="info-container">
         <div id="side-more-info" class="info"></div>
@@ -49,6 +78,8 @@
 <div id="facilities-table"></div>
 
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<!-- Leaflet MiniMap JavaScript -->
+<script src="https://unpkg.com/leaflet-minimap/dist/Control.MiniMap.min.js"></script>
 <script src="../resource/script/index.js"></script>
 </body>
 </html>

@@ -1,22 +1,63 @@
 let facilities = [];
 let map; // Declare map variable
 
-// Function to initialize the map
-function populateUSMap() {
-  // Initialize the map on the "usMap" div with a given center and zoom
-  map = L.map('usMap').setView([37.8, -96], 4);
+let usMap; // Declare main map variable
+let alaskaMap; // Declare Alaska map variable
+let hawaiiMap; // Declare Hawaii map variable
 
-  // Add a tile layer to add to our map
+// Function to initialize the main map
+function populateUSMap() {
+  // Set the bounds for the United States, including Alaska and Hawaii
+  var usBounds = [
+      [49.384358, -66.93457], // North East
+      [24.396308, -125.00165] // South West
+  ];
+
+  // Initialize the map with the bounds
+  usMap = L.map('usMap', {
+      maxBounds: usBounds,
+      minZoom: 3 // Adjust the minZoom as needed to prevent zooming out too far
+  }).setView([37.8, -96], 4);
+
+  // Add a tile layer to the main map
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  }).addTo(map);
-}
-function zoomOut() {
-  map.setView([37.8, -96], 4); // Set the view back to the initial position and zoom level
+      maxBounds: usBounds, // Apply bounds to the tile layer as well
+      noWrap: true // Prevent the map from wrapping around the world
+  }).addTo(usMap);
+
+  // Create mini-maps for Alaska and Hawaii
+  alaskaMap = new L.Control.MiniMap(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'), { toggleDisplay: true }).addTo(usMap);
+  hawaiiMap = new L.Control.MiniMap(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'), { toggleDisplay: true }).addTo(usMap);
+
+  // Set positions of mini-maps
+  alaskaMap._container.style.bottom = '10px';
+  alaskaMap._container.style.left = '10px';
+  hawaiiMap._container.style.bottom = '10px';
+  hawaiiMap._container.style.left = '150px'; // Adjust left position as needed
+
+  // Set bounds and zoom level for Alaska
+  var alaskaBounds = [
+      [70.461799,-143.390298], // North East
+      [57.551209,-166.494581] // South West
+  ];
+  alaskaMap._miniMap.setView([61.370716, -152.404419], 3); // Adjust center and zoom level as needed
+  alaskaMap._miniMap.options.minZoom = 3;
+  alaskaMap._miniMap.setMaxBounds(alaskaBounds);
+
+  // Set bounds and zoom level for Hawaii
+  var hawaiiBounds = [
+      [22.236744, -154.566406], // North East
+      [18.986428, -160.659180] // South West
+  ];
+  hawaiiMap._miniMap.setView([20.8036, -157.505], 7); // Adjust center and zoom level as needed
+  hawaiiMap._miniMap.options.minZoom = 7;
+  hawaiiMap._miniMap.setMaxBounds(hawaiiBounds);
 }
 
+
 // Function to add a dot to the map
-function addDot(facility) {
+function addDot(map, facility) {
     let type = facility.type;
     let lat = facility.latitude;
     let lon = facility.longitude;
@@ -52,8 +93,6 @@ function addDot(facility) {
 }
 
 
-// Example usage: Add a dot to New York City
-addDot(40.7128, -74.0060);
 
 async function handleOnLoad(){
     await populateFacilitiesArray();
@@ -218,7 +257,7 @@ async function populateFacilitiesArray() {
 
 function addMapPoints(){
     facilities.forEach(facility => {
-        addDot(facility)
+        addDot(usMap, facility)
     })
 }
     
@@ -259,9 +298,9 @@ function applyFilters() {
 }
 
 
-function handleShowMore(facility){
+function handleShowMore(facility) {
   console.log('facility chosen', facility);
-  let html=`
+  let html = `
       <h2>${facility.name}</h2>
       <p><strong>Division:</strong> ${facility.divName}</p>
       <p><strong>City:</strong> ${facility.city}</p>
@@ -276,8 +315,11 @@ function handleShowMore(facility){
 
   document.getElementById('side-more-info').innerHTML = html;
 
-  // Zoom to the clicked facility's location
-  map.setView([facility.latitude, facility.longitude], 7); // Adjust the zoom level as needed
+  // Check if the map view needs to be updated
+  if (!map.getBounds().contains([facility.latitude, facility.longitude])) {
+    // Zoom to the clicked facility's location
+    map.setView([facility.latitude, facility.longitude], 7); // Adjust the zoom level as needed
+  }
 }
 
   
