@@ -15,16 +15,19 @@ function populateUSMap() {
 
     // Initialize the map with the bounds
     usMap = L.map('usMap', {
-        maxBounds: usBounds,
-        minZoom: 3 // Adjust the minZoom as needed to prevent zooming out too far
-    }).setView([37.8, -96], 4);
-
-    // Add a tile layer to the main map
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxBounds: usBounds, // Apply bounds to the tile layer as well
-        noWrap: true // Prevent the map from wrapping around the world
-    }).addTo(usMap);
+      maxBounds: usBounds,
+      minZoom: 3, // Adjust the minZoom as needed
+      zoomControl: false, // Disable zoom control
+    scrollWheelZoom: false, // Disable scroll wheel zoom
+    dragging: false // Disable dragging
+  }).setView([37.8, -96], 4);
+  
+  // Add tile layer to the map as before
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxBounds: usBounds,
+      noWrap: true
+  }).addTo(usMap);
 
     // Create mini-maps for Alaska and Hawaii
     alaskaMap = new L.Control.MiniMap(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'), { toggleDisplay: true }).addTo(usMap);
@@ -217,35 +220,47 @@ function populateUSMap() {
 
   function createPolygons(regions) {
     regions.forEach(region => {
-        // Expand the coordinates of the region to create a larger zone
-        let expandedCoordinates = region.coordinates.map(coord => [coord[0] + 0.1, coord[1] + 0.1]);
-
-        // Create a polygon with the expanded coordinates of the region
-        let polygon = L.polygon(expandedCoordinates, {color: 'transparent', fillOpacity: 0}).addTo(usMap);
-
-        // Add text on top of the polygon with the district name
-        let center = polygon.getBounds().getCenter();
-        let districtName = region.name;
-        let text = L.divIcon({
-            className: 'text-label',
-            html: `<div class="label-text">${districtName}</div>`,
-            iconSize: [100, 40], // Increase icon size for larger text label
-            iconAnchor: [50, 20] // Center the text label on the marker
-        });
-        let marker = L.marker(center, { icon: text }).addTo(usMap);
-
-        // Hide the text label by default
-        marker.getElement().style.display = 'none';
-
-        // Event listeners to show/hide text label on hover
-        polygon.on('mouseover', function () {
-            marker.getElement().style.display = 'block';
-        });
-        polygon.on('mouseout', function () {
-            marker.getElement().style.display = 'none';
-        });
+      let coordinates = region.coordinates;
+  
+      let polygon = L.polygon(coordinates, {
+        color: 'transparent', // Make the border transparent
+        fillColor: 'transparent', // Ensure the fill is also transparent
+        fillOpacity: 0, // No fill opacity
+      }).addTo(usMap);
+  
+      // Bind a tooltip to the polygon with the region's name
+      polygon.bindTooltip(region.name, {
+        permanent: false, // Tooltip is not always visible
+        direction: 'center', // Show the tooltip in the center of the region
+        className: 'region-name-tooltip' // Custom class for styling if needed
+      });
+  
+      // You could adjust the tooltip options as needed for better visibility or styling
     });
+  }
+  
+
+function disableMapInteractions() {
+  usMap.dragging.disable();
+  usMap.touchZoom.disable();
+  usMap.doubleClickZoom.disable();
+  usMap.scrollWheelZoom.disable();
+  usMap.boxZoom.disable();
+  usMap.keyboard.disable();
+  if (usMap.tap) usMap.tap.disable(); // Check for mobile browsers to disable tap as well
 }
+
+function enableMapInteractions() {
+  usMap.dragging.enable();
+  usMap.touchZoom.enable();
+  usMap.doubleClickZoom.enable();
+  usMap.scrollWheelZoom.enable();
+  usMap.boxZoom.enable();
+  usMap.keyboard.enable();
+  if (usMap.tap) usMap.tap.enable(); // Check for mobile browsers to enable tap as well
+}
+
+
 
 
 
